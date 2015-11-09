@@ -1,65 +1,40 @@
-// Fifteen Puzzle Javascript Document
-// ID - 620076247
-// Colaboration - 620076399
-
-// Gloabl variables 
-var n = 15; //Number of tiles
-//var win = false; ???????????????????????????????????????????????????????????????????????????????????????????????????????????????
-var counter = 0; //Keeps track of number of moves made ?????????????????????????????????????????????????????????????????????????
-var puzzleHeight = 400; //Height & width) 
-
-// Reference of correct positioning of puzzle pieces 
-var puzzleDic = {"1":[0,0],"2":[0,100],"3":[0,200],"4":[0,300],"5":[100,0],"6":[100,100],"7":[100,200],"8":[100,300],"9":[200,0],"10":[200,100],"11":[200,200],"12":[200,300],"13":[300,0],"14":[300,100],"15":[300,200]}; 
+//Global variables
+var n = 15;
+var num_of_moves = 0;
+var spacePos = [300,300]; //Stores the empty location
 
 window.onload = function()
 {	//"use strict";
 	
-	// To get and arrange puzzle pieces on the game area in the correct order
-	var game_area = document.getElementById("puzzlearea").getElementsByTagName('div'); 
-	position(game_area);
+	var game_area = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
+	loc_img(game_area); //Function call
 	
-	// Shuffle puzzle pieces
-	//document.getElementById("shufflebutton").onclick = shuffle; ????????????????????????????????????????????????????????????????
+	//document.getElementById("shufflebutton").onclick = shuffle; //Function call????????????????????????????????????????????????
 	
-	// Play game
-	for(var i=0; i<game_area.length; i++)
+	for (var i=0; i< game_area.length; i++)
 	{
-		game_area[i].className = 'puzzlepiece'; //???????????????????????????????????????????????????????????????????????????????
+		game_area[i].className = 'puzzlepiece'; //CSS - Image and Size
 		
-		//game_area[i].onmouseover = movablePiece; ??????????????????????????????????????????????????????????????????????????????
-		//game_area[i].onmouseout = resetPiece; ?????????????????????????????????????????????????????????????????????????????????
-    	
-		console.log("Call was made to movePiece with "+game_area[i].offsetTop+", "+game_area[i].offsetLeft);
-		game_area[i].onclick = movePiece; // ??????????????????????????????????????????????????????????????????????????????????
-	}// Adding an event listener to each piece of the puzzle
+		//game_area[i].onmouseover = isPieceMovable; //EL - Highlighted state if valid move
+		//game_area[i].onmouseout = resetPiece; //EL - Reverts to unhighlight state	
+		
+    	game_area[i].onclick = movePiece;
+		//console.log("Call was made to movePiece with "+game_area.offsetTop+", ",+game_area.offsetLeft);
+		
+	} //Addition of relevant Cascading Style Sheet (CSS) and Event Listeners (EL) to puzzle pieces
 	
-	// New Play Game
-	/*while(!win){
-		for (var i=0; i< pieces.length; i++)
-		{
-			pieces[i].className = 'puzzlepiece'; //re-sizes the div
-			//pieces[i].onmouseover = movablePiece; 
-			//pieces[i].onmouseout = resetPiece;
-			
-			console.log("Call was made to movePiece with "+movePiece);
-    		pieces[i].onclick = movePiece;
-			
-			if(hasWon(pieces[i]){
-				win = true;	
-			}
-		}
-	}**/
-};
+}//Main
 
-function position(pieces)
+function loc_img(pieces)
 {	//"use strict";
+	var puzzleHeight = 400; //Height & width
+	
+	/*for (var i=0; i< pieces.length; i++)
+	{
+		pieces[i].className = 'puzzlepiece'; //CSS - Image and Size
+	}//Addition of CSS to the class 'puzzlepiece'*/
 	
 	var j = 0;
-	for (var i=0; i< pieces.length; i++)
-	{
-		pieces[i].className = 'puzzlepiece'; 
-	} //100x100 puzzle pieces 
-	
 	for (var x = 0; x < puzzleHeight; x+= 100)
 	{
 		for (var y = 0; y < puzzleHeight; y +=100)
@@ -73,7 +48,7 @@ function position(pieces)
 				break;
 			}
 		}
-	} //Tile
+	} //Correct Order
 		
 	var k = 0;
 	for (var yPos = puzzleHeight; yPos >= 100; yPos-= 100)
@@ -89,122 +64,46 @@ function position(pieces)
 			}
 		}
 	} //Background Image	
-}
+}//This function arrange the 15 puzzle pieces (Correct Order and Background Image)
 
-/*function hasWon(){
-	//Display number of moves in like the winner.jpg & counter not in an alert???????????????????????????????????????????????????
-}*/
+//Priority --> if odd or even then unsolvale ????????????????????????????????????????????????????????????????????????????????????
+function shuffle()
+{	//"use strict";
+	
+	var listAdjPos = [];
+	var c = 0;
+	
+	do{
+		for(key in puzzleDic){
+			if(movable(puzzleDic[key])){
+				listAdjPos.push(puzzleDic[key]);
+			}
+		}// Finding the list of positions adjacent to the empty space from the values in the dictionary
+		
+		if(c!==0){
+			//priorPos = getSpace;// Delimiter - Get current empty position prior to swap
+			var remove = listAdjPos.indexOf(spacePos);// Finding the index of the prior position
+			listAdjPos.splice(remove,1);// Removing this from the list of adjacent positions
+		}// Ensures that the swap isn't reversed at any point in the shuffling
+			
+		var choice = Math.floor(Math.random() * (listAdjPos.length-1));// Selection
+		movePiece(listAdjPos[choice]);// Position swap with empty space 
+		
+		c++;	
+	}while(c<n && spacePos!==[300,300])
+}//Thus function shuffles puzzle pieces when the button is clicked
 
-function movePiece() // Move puzzle piece to empty slot
-{		
-	//"use strict";
-	
-	if (moveable(this))
-	{
-		// Get location of empty slot
-		var emptySquare = getSpace();
-		console.log("Empty Square coordinates: "+emptySquare);
+function movable(square)
+{ 	//"use strict";	
 		
-		// Execute move of given puzzle piece
-		this.style.top = emptySquare[0] + "px";
-	    this.style.left = emptySquare[1] + "px";
-		
-		// Count move
-		counter++;
-		console.log("Count of Moves: "+counter);
-	}
-	else
-	{ console.log("In movePiece. This: X --> "+this.offsetTop+" Y --> "+this.offsetLeft+" ... Not able to be moved");}
-}
-
-function getSpace() // Keep track of where the empty square is
-{
-	//"use strict";
-	
-	// Inside the puzzle
-	var pieces = document.getElementById("puzzlearea").getElementsByTagName('div');
-	
-	// Empty square
-	var emptyX = 0;
-	var emptyY = 0;
-	
-	// Row/Column Grid
-	var column1 = 0;
-	var column2 = 0;
-	var column3 = 0;
-	var column4 = 0;
-	var row1 = 0;
-	var row2 = 0;
-	var row3 = 0;
-	var row4 = 0;
-	
-	// Calculate the points of the empty square
-	for (var i=0; i< pieces.length; i++)
-	{
-		//Rows (x)
-		switch (parseInt(pieces[i].style.top))
-		{
-			case 0:   row1 += parseInt(pieces[i].style.left); console.log(" Added to Row 1: "+row1);  break;
-			case 100: row2 += parseInt(pieces[i].style.left);console.log("Added to Row 2: "+row2); break;
-			case 200: row3 += parseInt(pieces[i].style.left); console.log("Added to Row 3: "+row3);break;
-			case 300: row4 += parseInt(pieces[i].style.left); console.log("Added to Row 4: "+row4);break;
-			default: console("Damn Stupid 1 thing! #kmft - In Top Switch");break;
-		}
-		
-		console.log("Row 1: "+row1);console.log("Row 2: "+row2);
-		console.log("Row 3: "+row3);console.log("Row 4: "+row4);
-		
-		// Columns (y)
-		switch (parseInt(pieces[i].style.left))
-		{
-			case 0:   column1 += parseInt(pieces[i].style.top); console.log("Added to Column 1: "+column1);break;
-			case 100: column2 += parseInt(pieces[i].style.top);console.log("Added to Column 2: "+column2); break;
-			case 200: column3 += parseInt(pieces[i].style.top); console.log("Added to Column 3: "+column3);break;
-			case 300: column4 += parseInt(pieces[i].style.top);console.log("Added to Column 4: "+column4); break;
-			default: console("Damn Stupid2 thing! #kmft - In Left Switch");break;
-		}
-		
-		console.log("Column 1: "+column1);console.log("Column 2: "+column2);
-		console.log("Column 3: "+column3);console.log("Column 4: "+column4);
-		
-	}
-	
-	if (row1 !== 600) {emptyX = 0;}
-		else if (row2 !== 600) {emptyX = 100;}
-			else if (row3 !== 600) {emptyX = 200;}
-				else if (row4 !== 600) {emptyX = 300;}
-					else if(row1===600 && row2===600 && row3===600 && row4===600){
-						console.log("Hardcode --> Row 1?!");
-						emptyX = (row1-300);
-					}
-					
-	if (column1 !== 600) {emptyY = 0;}
-		else if (column2 !== 600) {emptyY = 100;} 
-			else if (column3 !== 600) {emptyY = 200;}
-	 			else if (column4 !== 600) {emptyY = 300;}
-					else if(column1===600 && column2===600 && column3===600 && column4===600){
-						console.log("Hardcode --> Column 1?!");
-						emptyY = (column1-300);
-					}
-					
-	//console.log(emptyX,emptyY);
-	return [emptyX,emptyY]; 
-}
-	
-function moveable(square) // Determine whether a given square can move or not 
-{	
-	//"use strict";	
-		
-	// Get location of empty square
-	var emptySquare = getSpace();
 	console.log("Square Top(x): "+square.offsetTop+" Square Left(y):"+square.offsetLeft);
-	console.log("(Comparison) SpaceTop(x): "+emptySquare[0]+" SpaceLeft(y): "+emptySquare[1]);
+	console.log("(Comparison) SpaceTop(x): "+spacePos[0]+" SpaceLeft(y): "+spacePos[1]);
 	
 	// Determine whether it neighbors the empty square
-	if ( parseInt(square.style.top) === emptySquare[0] )
+	if ( parseInt(square.style.top) === spacePos[0] )
 	{
-		if ( parseInt(square.style.left) + 100 === emptySquare[1] || 
-			 parseInt(square.style.left) - 100 === emptySquare[1] )
+		if ( parseInt(square.style.left) + 100 === spacePos[1] || 
+			 parseInt(square.style.left) - 100 === spacePos[1] )
 		{
 			console.log("In moveable. Top - Same & Left - Changes. Can be moved");
 			return true;
@@ -213,10 +112,10 @@ function moveable(square) // Determine whether a given square can move or not
 			return false;	
 		}
 	}
-	else if ( parseInt(square.style.left) === emptySquare[1] )
+	else if ( parseInt(square.style.left) === spacePos[1] )
 		 {   
-			if ( parseInt(square.style.top) + 100 === emptySquare[0] || 
-			     parseInt(square.style.top) - 100 === emptySquare[0] )
+			if ( parseInt(square.style.top) + 100 === spacePos[0] || 
+			     parseInt(square.style.top) - 100 === spacePos[0] )
 			{
 				console.log("In moveable. Top - Changes & Left - Same. Can be moved");
 				return true;
@@ -229,68 +128,35 @@ function moveable(square) // Determine whether a given square can move or not
 	{
 		console.log("In moveable - Not adjacent possibly");
 		console.log("Square Top(x): "+square.offsetTop+" Square Left(y):"+square.offsetLeft);
-		console.log("(Comparison) SpaceTop(x): "+emptySquare[0]+" SpaceLeft(y): "+emptySquare[1]);
+		console.log("(Comparison) SpaceTop(x): "+spacePos[0]+" SpaceLeft(y): "+spacePos[1]);
 		return false;
 	}
-		
-}
+}//This functions checks the validity of possible moves (i.e. Only adjacent puzzle pieces to the space)
 
-function movablePiece() //Highlight piece if moveable
-{	//"use strict";
-		if (moveable(this))
-		{
-			this.className = 'movablepiece';
-		}
-	
-} 
+function isPieceMovable(){
+	//Uses this?????????????????????????????????????????????????????????????????????????????
+	//Calls on movable and if true then applies CSS ?????????????????????????????????????????
+}//This function highlights if puzzle piece if it is a valid move
 
-//Priority --> if odd or even then unsolvale ????????????????????????????????????????????????????????????????????????????????????
-function shuffle()
+function movePiece() 
 {	//"use strict";
 	
-	var listAdjPos = [];
-	var priorPos = getSpace;
-	var c = 0;
-	
-	do{
-		for(key in puzzleDic){
-			if(movable(puzzleDic[key])){
-				listAdjPos.push(puzzleDic[key]);
-			}
-		}// Finding the list of positions adjacent to the empty space from the values in the dictionary
-		
-		if(c!==0){
-			priorPos = getSpace;// Delimiter - Get current empty position prior to swap
-			var remove = listAdjPos.indexOf(priorPos);// Finding the index of the prior position
-			listAdjPos.splice(remove,1);// Removing this from the list of adjacent positions
-		}// Ensures that the swap isn't reversed at any point in the shuffling
-			
-		var choice = Math.floor(Math.random() * (listAdjPos.length-1));// Selection
-		movePiece(listAdjPos[choice]);// Position swap with empty space 
-		
-		c++;	
-	}while(c<n && getSpace!==[300,300])
-}
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-/**function movablePiece() // Highlight(s) the puzzle piece if it is moveable
-{
-	"use strict";
-	
-	// Get puzzle piece elements
-	var pieces = document.getElementById("puzzlearea").getElementsByTagName('div');
-	
-	for (var i=0; i< pieces.length; i++)
+	if (movable(this))
 	{
-		if (moveable(pieces[i]))
-		{
-			pieces[i].className = "movablepiece";
-		}
+		var priorPos = spacePos.slice(0); // Holding current space before move
+		
+		// Change coordinates of empty space to piece being moved
+		spacePos = [parseInt(this.style.top),parseInt(this.style.left)];
+		
+		console.log("Empty Square coordinates: "+spacePos);
+		
+		// Execute move of given puzzle piece
+		this.style.top = priorPos[0] + "px";
+	    this.style.left = priorPos[1] + "px";
+		
+		// Count the number of moves made --> Test if player has won with that move --> If not then increment ???????????????????
+		num_of_moves++; console.log("Count of Moves: "+num_of_moves);
 	}
-}**/
-
-/**function resetPiece()
-{
-	this.className = 'puzzlepiece'; //re-sizes the div
-} //Once the cursor is no longer hovering over the square, its appearance should revert to its original state**/
+	else
+	{console.log("In movePiece. This: X --> "+this.offsetTop+" Y --> "+this.offsetLeft+" ... Not able to be moved");}
+}//This function performs a swap puzzle piece to empty slot
