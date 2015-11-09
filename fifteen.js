@@ -3,13 +3,16 @@ var n = 15;
 var num_of_moves = 0;
 var spacePos = [300,300]; //Stores the empty location
 
+// Reference of correct positioning of puzzle pieces 
+var puzzleDic = {"1":[0,0],"2":[0,100],"3":[0,200],"4":[0,300],"5":[100,0],"6":[100,100],"7":[100,200],"8":[100,300],"9":[200,0],"10":[200,100],"11":[200,200],"12":[200,300],"13":[300,0],"14":[300,100],"15":[300,200]}
+
 window.onload = function()
 {	//"use strict";
 	
 	var game_area = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
 	loc_img(game_area); //Function call
 	
-	//document.getElementById("shufflebutton").onclick = shuffle; //Function call????????????????????????????????????????????????
+	document.getElementById("shufflebutton").onclick = shuffle; //Function call????????????????????????????????????????????????
 	
 	for (var i=0; i< game_area.length; i++)
 	{
@@ -70,24 +73,37 @@ function loc_img(pieces)
 function shuffle()
 {	//"use strict";
 	
+	var pieces = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
 	var listAdjPos = [];
 	var c = 0;
 	
 	do{
-		for(key in puzzleDic){
-			if(movable(puzzleDic[key])){
-				listAdjPos.push(puzzleDic[key]);
+		for(var s = 0; s<pieces.length; s++){
+			if(movable(pieces[s])){
+				listAdjPos.push(pieces[s]);
 			}
 		}// Finding the list of positions adjacent to the empty space from the values in the dictionary
 		
+		console.log("In shuffle. Array: "+listAdjPos);
+		
 		if(c!==0){
-			//priorPos = getSpace;// Delimiter - Get current empty position prior to swap
-			var remove = listAdjPos.indexOf(spacePos);// Finding the index of the prior position
-			listAdjPos.splice(remove,1);// Removing this from the list of adjacent positions
+			//var remove = listAdjPos.indexOf(spacePos);// Finding the index of the prior position
+			console.log("Inside c!==0");
+			
+			for(var i=0; i<listAdjPos.length; i++){
+				if(((parseInt(listAdjPos[i].style.top)) === (spacePos[0])) 
+				&& (parseInt((listAdjPos[i].style.left)) === (spacePos[1]))){
+					listAdjPos.splice(i,1);// Removing this from the list of adjacent positions
+					break;
+				}
+			}
+			
 		}// Ensures that the swap isn't reversed at any point in the shuffling
 			
 		var choice = Math.floor(Math.random() * (listAdjPos.length-1));// Selection
-		movePiece(listAdjPos[choice]);// Position swap with empty space 
+		move(listAdjPos[choice]);
+		
+		//(listAdjPos[choice]).movePiece;// Position swap with empty space ?????????????????????????????????????????????????????? 
 		
 		c++;	
 	}while(c<n && spacePos!==[300,300])
@@ -142,21 +158,25 @@ function movePiece()
 {	//"use strict";
 	
 	if (movable(this))
-	{
-		var priorPos = spacePos.slice(0); // Holding current space before move
-		
-		// Change coordinates of empty space to piece being moved
-		spacePos = [parseInt(this.style.top),parseInt(this.style.left)];
-		
-		console.log("Empty Square coordinates: "+spacePos);
-		
-		// Execute move of given puzzle piece
-		this.style.top = priorPos[0] + "px";
-	    this.style.left = priorPos[1] + "px";
+	{	
+		move(this);
 		
 		// Count the number of moves made --> Test if player has won with that move --> If not then increment ???????????????????
 		num_of_moves++; console.log("Count of Moves: "+num_of_moves);
 	}
 	else
 	{console.log("In movePiece. This: X --> "+this.offsetTop+" Y --> "+this.offsetLeft+" ... Not able to be moved");}
-}//This function performs a swap puzzle piece to empty slot
+}//This function validates player's moves and relays the appropriate action(s)
+
+function move(current){
+	var priorPos = spacePos.slice(0); // Holding current space before move
+		
+	// Change coordinates of empty space to piece being moved
+	spacePos = [parseInt(current.style.top),parseInt(current.style.left)];
+		
+	console.log("Empty Square coordinates: "+spacePos);
+		
+	// Execute move of given puzzle piece
+	current.style.top = priorPos[0] + "px";
+	current.style.left = priorPos[1] + "px";
+}//This function performs the actual swap of puzzle piece to empty slot
