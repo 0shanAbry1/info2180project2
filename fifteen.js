@@ -13,9 +13,17 @@ window.onload = function(){
 	
 	document.getElementById("shufflebutton").onclick = shuffle; //Function call
 	
+	var para = document.createElement("p");//Create paragraph tag
+	var node = document.createTextNode("YOU WON! CONGRATS!");//Create text for the paragraph tag
+	para.appendChild(node);//Adding text to tag
+	var location = document.getElementById("controls");location.appendChild(para);//Positioning into location
+	para.id = ("winmsg");//Create ID for notification message
+	document.getElementById("winmsg").style.visibility = "hidden";//Not shown until player wins the game
+	
 	for (var i=0; i< game_area.length; i++){
 		game_area[i].className = 'puzzlepiece'; //CSS - Image and Size
 		game_area[i].onclick = movePiece; //EL - Monitors when the mouse clicks on a puzzle piece and performs necessary actions
+		
 		game_area[i].onmouseover = function(){
 			if(movable(this)){this.classList.add("movablepiece");}
 			else{this.classList.remove("movablepiece");}
@@ -42,8 +50,8 @@ function loc_img(pieces){
 	for (var yPos = puzzleHeight; yPos >= 100; yPos-= 100){
 		for (var xPos = 0; xPos >= -1*(puzzleHeight-100); xPos -= 100){
 			if(k!==15){
-				pieces[k].style.backgroundImage = "url('https://googledrive.com/host/0B3zmJAfIk6jvbUZMeGZWcDhoMWozRWlKSWRzWnBnY3cxV0RV')";
 				pieces[k].style.backgroundPosition = (xPos + "px ") + (yPos + "px");
+				pieces[k].style.backgroundImage = "url('https://googledrive.com/host/0B3zmJAfIk6jvbUZMeGZWcDhoMWozRWlKSWRzWnBnY3cxV0RV')";
 				k++; //console.log(xPos, yPos);
 			}
 			else{break;}
@@ -53,12 +61,13 @@ function loc_img(pieces){
 
 function shuffle(){	
 	var pieces = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
+	document.getElementById("winmsg").style.visibility = "hidden";//Resets
 	var listAdjPos = [];
 	var c = 0;
 	
 	do{
 		for(var s = 0; s<pieces.length; s++){
-			pieces[s].style.backgroundImage = "url('https://googledrive.com/host/0B3zmJAfIk6jvbUZMeGZWcDhoMWozRWlKSWRzWnBnY3cxV0RV')";//????????????????????????????????????????
+			pieces[s].style.backgroundImage = "url('https://googledrive.com/host/0B3zmJAfIk6jvbUZMeGZWcDhoMWozRWlKSWRzWnBnY3cxV0RV')";//Resets
 			if(movable(pieces[s])){listAdjPos.push(pieces[s]);}
 		}// Finding the list of positions adjacent to the empty space from the values in the dictionary
 		
@@ -121,9 +130,6 @@ function hasWon(){
 }
 
 function image_changer(tile){	
-	var para = document.createElement("p");//Create paragraph tag
-	var node = document.createTextNode("YOU WON! CONGRATS!");//Create text for the paragraph tag
-	para.appendChild(node);//Adding text to tag
-	var location = document.getElementById("controls");location.appendChild(para);
+	document.getElementById("winmsg").style.visibility = "visible";//Player has won therefore it can be shown
 	for(var ic = 0; ic<tile.length; ic++){tile[ic].style.backgroundImage = "url('https://googledrive.com/host/0B3zmJAfIk6jvb2V5c3MxeUdIREkzSklLYW9sekJCdE1rY0NZ')";}
 }//Notification that the player has won the game
