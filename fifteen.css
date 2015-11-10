@@ -39,7 +39,7 @@ h1 {
 }
 
 /* This class should be applied to each of the 15 puzzle pieces. */
-.puzzlepiece {/*background-image: url(background.jpg);*/
+.puzzlepiece {
 	background-image: url("https://googledrive.com/host/0B3zmJAfIk6jvbUZMeGZWcDhoMWozRWlKSWRzWnBnY3cxV0RV");
 	border: 2px solid black;
 	height: 96px;
