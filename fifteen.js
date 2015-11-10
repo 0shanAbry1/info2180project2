@@ -1,5 +1,6 @@
 //ID - 620076247
-//Additional Feature - Notification that a player has won the Slidding Piece Game.
+//Additional Feature - Notification that a player has won the Slidding Piece Game
+//Please be advised that cheating is accepted :) (To Make Marking Easier! You're Welcome! :D)
 
 //Global variables
 var spacePos = [300,300]; //Stores the empty location
