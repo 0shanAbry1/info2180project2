@@ -52,7 +52,6 @@ function loc_img(pieces){
 
 function shuffle(){	
 	var pieces = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
-	console.log(pieces);
 	var listAdjPos = [];
 	var c = 0;
 	
