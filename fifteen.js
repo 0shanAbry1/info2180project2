@@ -42,6 +42,7 @@ function loc_img(pieces){
 	for (var yPos = puzzleHeight; yPos >= 100; yPos-= 100){
 		for (var xPos = 0; xPos >= -1*(puzzleHeight-100); xPos -= 100){
 			if(k!==15){
+				pieces[k].style.backgroundImage = "url('https://googledrive.com/host/0B3zmJAfIk6jvbUZMeGZWcDhoMWozRWlKSWRzWnBnY3cxV0RV')";
 				pieces[k].style.backgroundPosition = (xPos + "px ") + (yPos + "px");
 				k++; //console.log(xPos, yPos);
 			}
