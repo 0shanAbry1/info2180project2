@@ -9,9 +9,7 @@ var spacePos = [300,300]; //Stores the empty location
 // Reference of correct positioning of puzzle pieces 
 var puzzleDic = {"1":[0,0],"2":[0,100],"3":[0,200],"4":[0,300],"5":[100,0],"6":[100,100],"7":[100,200],"8":[100,300],"9":[200,0],"10":[200,100],"11":[200,200],"12":[200,300],"13":[300,0],"14":[300,100],"15":[300,200]}
 
-window.onload = function()
-{	//"use strict";
-	
+window.onload = function(){	
 	var game_area = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
 	loc_img(game_area); //Function call
 	
@@ -37,8 +35,7 @@ window.onload = function()
 	
 }//Main
 
-function loc_img(pieces)
-{	//"use strict";
+function loc_img(pieces){	
 	var puzzleHeight = 400; //Height & width
 	
 	/*for (var i=0; i< pieces.length; i++)
@@ -78,9 +75,7 @@ function loc_img(pieces)
 	} //Background Image	
 }//This function arrange the 15 puzzle pieces (Correct Order and Background Image)
 
-function shuffle()
-{	//"use strict";
-	
+function shuffle(){	
 	var pieces = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
 	console.log(pieces);
 	var listAdjPos = [];
@@ -115,9 +110,7 @@ function shuffle()
 	}while(c<n && spacePos!==[300,300])
 }//Thus function shuffles puzzle pieces when the button is clicked
 
-function movable(square)
-{ 	//"use strict";	
-		
+function movable(square){ 	
 	console.log("Square Top(x): "+square.offsetTop+" Square Left(y):"+square.offsetLeft);
 	console.log("(Comparison) SpaceTop(x): "+spacePos[0]+" SpaceLeft(y): "+spacePos[1]);
 	
@@ -155,9 +148,7 @@ function movable(square)
 	}
 }//This functions checks the validity of possible moves (i.e. Only adjacent puzzle pieces to the space)
 
-function movePiece() 
-{	//"use strict";
-	
+function movePiece(){	
 	if (movable(this))
 	{	
 		move(this);
@@ -185,64 +176,26 @@ function move(current){
 }//This function performs the actual swap of puzzle piece to empty slot
 
 function hasWon(){
-	/**var correct = 0; //Counts the number of puzzle pieces in the correct order
-	var found = false; //If the location of the puzzle piece and value are the same
-	var track = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
-	//console.log(track);
+	var correct = 0;
+	var area = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
 	
-	//Using a for each --> Go through the array and find the location that is equivalent to the the dictionary
-	//finding this, check if the key and text are equal; if not then flag is false but if true continue to the next key:value
-	//When m=15 and the flag is true then call on change image
-	
-	for(key in puzzleDic){
-		for(var w=0;w<track.length;w++){
-			if((parseInt(track[w].style.top)===puzzleDic[key][0]) && (parseInt(track[w].style.left)===puzzleDic[key][1])){
-				found = true;
-				if(track[w].textContent===key){
-					correct++;
-					break;
-				}	
-			}
-			if(found){
-				break;
-			}//If found but key!== to the textContent	
-		}//Traversing through the array of puzzple piece to find number of equivalence
-		found = false; //resets
-	}//Traversing through the dictionary key:value pair
-	
-	if(correct = 15){
-		image_changer(track);
-	}//Function call*/
-	
-	//Get an array of the divs --> check each elements' for equivalence
-	//Flag - Assumed to be true (Controls the while)
-	//Equivalence:- If each element (A) Has the same position [x,y] === (style Top and Left) AND (B) key === text in the divs
-	//If equivalence false then flag is set then while terminated.
-	//However, if flag is true and counter = 15 then display winner.jpg??????????????????????????????????????????????????????????
-	
-	var m = 0; 
-	var winner = true;
-	var track = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
-	
-	while(winner){
+	for(var w = 0; w<area.length; w++){
 		for(key in puzzleDic){
-			console.log(track[m].style.top);
-			
-			if ((parseInt(track[m].style.top)) === (puzzleDic[key][0])
-			&& (parseInt(track[m].style.left)) === (puzzleDic[key][1]) 
-			&& (track[m].textContent!==key)){
-				winner = false;
-				//m = 15;
-				break;
-			}
-			m++;
-		}
-		
-		if(winner === true && m===15){
-			image_changer(track);
-		}//Notification that the player has won the game
+			if(puzzleDic[key]!==spacePos){
+				if((parseInt(area[w].style.top)===puzzleDic[key][0]) 
+				&& (parseInt(area[w].style.left)===puzzleDic[key][1])){
+					if(area[w].textContent===key){
+						correct++;
+					}//Increments if equivalent
+				}//Compares the div properties of the current puzzle piece with the value of the key
+			}//Eliminates the possibility of an equivalence check with the space location
+		}//Traversing through the dictionary key:value pair
+	}//Traversing through the array of puzzple pieces
+	
+	if(correct === 15){
+		image_changer(area);
 	}
-}//This function verifies if upon moving a selected piece if the player has won the game
+}
 
 function image_changer(tile){	
 	var para = document.createElement("p");//Create paragraph tag
