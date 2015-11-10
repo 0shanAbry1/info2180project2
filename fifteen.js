@@ -1,6 +1,9 @@
+//ID - 620076247
+//Additional Feature - Notification that a player has won the Slidding Piece Game.
+
 //Global variables
 var n = 15;
-var num_of_moves = 0;
+var num_of_moves = 0;//Only if Best Time & Number of Move Feature ?????????????????????????????????????????????????????????????
 var spacePos = [300,300]; //Stores the empty location
 
 // Reference of correct positioning of puzzle pieces 
@@ -12,15 +15,21 @@ window.onload = function()
 	var game_area = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
 	loc_img(game_area); //Function call
 	
-	document.getElementById("shufflebutton").onclick = shuffle; //Function call????????????????????????????????????????????????
+	document.getElementById("shufflebutton").onclick = shuffle; //Function call
 	
 	for (var i=0; i< game_area.length; i++)
 	{
 		game_area[i].className = 'puzzlepiece'; //CSS - Image and Size
 		
-		//game_area[i].onmouseover = isPieceMovable; //EL - Highlighted state if valid move
-		//game_area[i].onmouseout = resetPiece; //EL - Reverts to unhighlight state	
-		
+		game_area[i].onmouseover = function(){
+			if(movable(this)){
+				this.classList.add("movablepiece");
+			}
+			else{
+				this.classList.remove("movablepiece");
+			}
+		} //EL - Highlights adjacent puzzle pieces (Valid moves)
+				
     	game_area[i].onclick = movePiece;
 		//console.log("Call was made to movePiece with "+game_area.offsetTop+", ",+game_area.offsetLeft);
 		
@@ -69,11 +78,11 @@ function loc_img(pieces)
 	} //Background Image	
 }//This function arrange the 15 puzzle pieces (Correct Order and Background Image)
 
-//Priority --> if odd or even then unsolvale ????????????????????????????????????????????????????????????????????????????????????
 function shuffle()
 {	//"use strict";
 	
 	var pieces = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
+	console.log(pieces);
 	var listAdjPos = [];
 	var c = 0;
 	
@@ -102,9 +111,6 @@ function shuffle()
 			
 		var choice = Math.floor(Math.random() * (listAdjPos.length-1));// Selection
 		move(listAdjPos[choice]);
-		
-		//(listAdjPos[choice]).movePiece;// Position swap with empty space ?????????????????????????????????????????????????????? 
-		
 		c++;	
 	}while(c<n && spacePos!==[300,300])
 }//Thus function shuffles puzzle pieces when the button is clicked
@@ -149,11 +155,6 @@ function movable(square)
 	}
 }//This functions checks the validity of possible moves (i.e. Only adjacent puzzle pieces to the space)
 
-function isPieceMovable(){
-	//Uses this?????????????????????????????????????????????????????????????????????????????
-	//Calls on movable and if true then applies CSS ?????????????????????????????????????????
-}//This function highlights if puzzle piece if it is a valid move
-
 function movePiece() 
 {	//"use strict";
 	
@@ -162,7 +163,7 @@ function movePiece()
 		move(this);
 		
 		// Count the number of moves made --> Test if player has won with that move --> If not then increment ???????????????????
-		num_of_moves++; console.log("Count of Moves: "+num_of_moves);
+		//num_of_moves++; console.log("Count of Moves: "+num_of_moves);//??????????????????????????????????????????????????????????
 	}
 	else
 	{console.log("In movePiece. This: X --> "+this.offsetTop+" Y --> "+this.offsetLeft+" ... Not able to be moved");}
@@ -179,4 +180,79 @@ function move(current){
 	// Execute move of given puzzle piece
 	current.style.top = priorPos[0] + "px";
 	current.style.left = priorPos[1] + "px";
+	
+	hasWon(); //????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 }//This function performs the actual swap of puzzle piece to empty slot
+
+function hasWon(){
+	/**var correct = 0; //Counts the number of puzzle pieces in the correct order
+	var found = false; //If the location of the puzzle piece and value are the same
+	var track = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
+	//console.log(track);
+	
+	//Using a for each --> Go through the array and find the location that is equivalent to the the dictionary
+	//finding this, check if the key and text are equal; if not then flag is false but if true continue to the next key:value
+	//When m=15 and the flag is true then call on change image
+	
+	for(key in puzzleDic){
+		for(var w=0;w<track.length;w++){
+			if((parseInt(track[w].style.top)===puzzleDic[key][0]) && (parseInt(track[w].style.left)===puzzleDic[key][1])){
+				found = true;
+				if(track[w].textContent===key){
+					correct++;
+					break;
+				}	
+			}
+			if(found){
+				break;
+			}//If found but key!== to the textContent	
+		}//Traversing through the array of puzzple piece to find number of equivalence
+		found = false; //resets
+	}//Traversing through the dictionary key:value pair
+	
+	if(correct = 15){
+		image_changer(track);
+	}//Function call*/
+	
+	//Get an array of the divs --> check each elements' for equivalence
+	//Flag - Assumed to be true (Controls the while)
+	//Equivalence:- If each element (A) Has the same position [x,y] === (style Top and Left) AND (B) key === text in the divs
+	//If equivalence false then flag is set then while terminated.
+	//However, if flag is true and counter = 15 then display winner.jpg??????????????????????????????????????????????????????????
+	
+	var m = 0; 
+	var winner = true;
+	var track = document.getElementById("puzzlearea").getElementsByTagName('div'); //Accessing the div of 15 divs
+	
+	while(winner){
+		for(key in puzzleDic){
+			console.log(track[m].style.top);
+			
+			if ((parseInt(track[m].style.top)) === (puzzleDic[key][0])
+			&& (parseInt(track[m].style.left)) === (puzzleDic[key][1]) 
+			&& (track[m].textContent!==key)){
+				winner = false;
+				//m = 15;
+				break;
+			}
+			m++;
+		}
+		
+		if(winner === true && m===15){
+			image_changer(track);
+		}//Notification that the player has won the game
+	}
+}//This function verifies if upon moving a selected piece if the player has won the game
+
+function image_changer(tile){	
+	var para = document.createElement("p");//Create paragraph tag
+	var node = document.createTextNode("YOU WON! CONGRATS!");//Create text for the paragraph tag
+	para.appendChild(node);//Adding text to tag
+			
+	var location = document.getElementById("controls");
+	location.appendChild(para);
+	
+	for(var ic = 0; ic<tile.length; ic++){
+		tile[ic].style.backgroundImage = "url('https://googledrive.com/host/0B3zmJAfIk6jvb2V5c3MxeUdIREkzSklLYW9sekJCdE1rY0NZ')";
+	}
+}//Notification that the player has won the game
